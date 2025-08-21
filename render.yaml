@@ -3,7 +3,7 @@ services:
   - type: web
     name: patisserie-backend
     env: python
-    plan: starter
+    plan: free
     buildCommand: chmod +x build.sh && ./build.sh
     startCommand: gunicorn patisserie_project.wsgi:application --bind 0.0.0.0:$PORT --timeout 120
     envVars:
@@ -21,10 +21,9 @@ services:
         value: "https://patisserie-frontend.onrender.com,http://localhost:3000"
 
   # Service Frontend React
-  - type: web
+  - type: static
     name: patisserie-frontend
-    env: static
-    plan: starter
+    plan: free
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: ./frontend/build
     envVars:
