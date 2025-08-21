@@ -7,9 +7,9 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(Gateau)
 class GateauAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'type', 'prix', 'disponible')
+    list_display = ('nom', 'prix', 'disponible')
     search_fields = ('nom',)
-    list_filter = ('type',)
+    list_filter = ('disponible',)
 
 @admin.register(Commande)
 class CommandeAdmin(admin.ModelAdmin):
@@ -19,8 +19,9 @@ class CommandeAdmin(admin.ModelAdmin):
 
 @admin.register(ArticleEvenement)
 class EvenementAdmin(admin.ModelAdmin):
-    list_display = ('titre', 'date_publication')
+    list_display = ('titre', 'date_creation', 'date_evenement', 'actif')
     search_fields = ('titre',)
+    list_filter = ('actif', 'date_evenement')
 
 @admin.register(ParametresLivraison)
 class ParametreLivraisonAdmin(admin.ModelAdmin):
