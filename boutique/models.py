@@ -26,6 +26,13 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
+# Rendre Pillow optionnel
+try:
+    from PIL import Image
+    HAS_PILLOW = True
+except ImportError:
+    HAS_PILLOW = False
+
 class Gateau(models.Model):
     TYPE_CHOICES = [
         ('anniversaire', 'Anniversaire'),
@@ -39,9 +46,24 @@ class Gateau(models.Model):
     prix = models.DecimalField(max_digits=8, decimal_places=2)
     image = models.ImageField(upload_to='gateaux/', blank=True, null=True)
     disponible = models.BooleanField(default=True)
+    date_creation = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return self.nom
+
+    def save(self, *args, **kwargs):
+        # Vérifier si Pillow est disponible avant de traiter l'image
+        if self.image and HAS_PILLOW:
+            try:
+                img = Image.open(self.image)
+                # Redimensionner l'image si nécessaire
+                if img.height > 300 or img.width > 300:
+                    output_size = (300, 300)
+                    img.thumbnail(output_size)
+                    img.save(self.image.path)
+            except Exception as e:
+                print(f"Erreur lors du traitement de l'image: {e}")
+        super().save(*args, **kwargs)
 
 class Commande(models.Model):
     STATUS_CHOICES = [
@@ -144,13 +166,29 @@ Bon appétit! 🎂"""
         return f"https://wa.me/{self.client_telephone}?text={encoded_message}"
 
 class ArticleEvenement(models.Model):
-    titre = models.CharField(max_length=100)
-    description = models.TextField()
-    image = models.ImageField(upload_to='evenements/', blank=True, null=True)
-    date_publication = models.DateTimeField(auto_now_add=True)
-    
+    titre = models.CharField(max_length=200)
+    contenu = models.TextField()
+    image = models.ImageField(upload_to='articles/', blank=True, null=True)
+    date_creation = models.DateTimeField(auto_now_add=True)
+    date_evenement = models.DateTimeField()
+    actif = models.BooleanField(default=True)
+
     def __str__(self):
         return self.titre
+
+    def save(self, *args, **kwargs):
+        # Vérifier si Pillow est disponible avant de traiter l'image
+        if self.image and HAS_PILLOW:
+            try:
+                img = Image.open(self.image)
+                # Redimensionner l'image si nécessaire
+                if img.height > 400 or img.width > 400:
+                    output_size = (400, 400)
+                    img.thumbnail(output_size)
+                    img.save(self.image.path)
+            except Exception as e:
+                print(f"Erreur lors du traitement de l'image: {e}")
+        super().save(*args, **kwargs)
 
 class ParametresLivraison(models.Model):
     prix_livraison = models.DecimalField(max_digits=8, decimal_places=2)
@@ -200,18 +238,17 @@ class Notification(models.Model):
 
 class GaleriePhoto(models.Model):
     """Modèle pour la galerie photos des réalisations"""
-    CATEGORIES = [
-        ('anniversaire', 'Anniversaire'),
-        ('mariage', 'Mariage'),
-        ('bapteme', 'Baptême'),
-        ('communion', 'Communion'),
-        ('autre', 'Autre'),
+    CATEGORIE_CHOICES = [
+        ('gateaux', 'Gâteaux'),
+        ('evenements', 'Événements'),
+        ('ateliers', 'Ateliers'),
+        ('autres', 'Autres'),
     ]
     
     titre = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     image = models.ImageField(upload_to='galerie/')
-    categorie = models.CharField(max_length=20, choices=CATEGORIES, default='autre')
+    categorie = models.CharField(max_length=20, choices=CATEGORIE_CHOICES, default='gateaux')
     date_realisation = models.DateField()
     date_ajout = models.DateTimeField(auto_now_add=True)
     ordre_affichage = models.IntegerField(default=0)  # Pour l'ordre d'affichage
@@ -223,18 +260,32 @@ class GaleriePhoto(models.Model):
         verbose_name_plural = "Photos de galerie"
     
     def __str__(self):
-        return f"{self.titre} - {self.get_categorie_display()}"
-    
+        return self.titre
+
+    def save(self, *args, **kwargs):
+        # Vérifier si Pillow est disponible avant de traiter l'image
+        if self.image and HAS_PILLOW:
+            try:
+                img = Image.open(self.image)
+                # Redimensionner l'image si nécessaire
+                if img.height > 500 or img.width > 500:
+                    output_size = (500, 500)
+                    img.thumbnail(output_size)
+                    img.save(self.image.path)
+            except Exception as e:
+                print(f"Erreur lors du traitement de l'image: {e}")
+        super().save(*args, **kwargs)
+
     def to_dict(self):
         """Convertir en dictionnaire pour l'API"""
         return {
             'id': self.id,
             'titre': self.titre,
             'description': self.description,
-            'image': self.image.url if self.image else None,
+            'image_url': self.image.url if self.image else None,
             'categorie': self.categorie,
             'categorie_display': self.get_categorie_display(),
-            'date_realisation': self.date_realisation.strftime('%Y-%m-%d'),
+            'date_realisation': self.date_realisation.isoformat(),
             'date_ajout': self.date_ajout.isoformat(),
             'ordre_affichage': self.ordre_affichage,
             'visible': self.visible,

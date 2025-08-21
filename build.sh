@@ -13,14 +13,13 @@ python --version
 echo "📦 Mise à jour de pip..."
 pip install --upgrade pip
 
-# Installer les dépendances Python
+# Installer les dépendances Python de base
 echo "📦 Installation des dépendances Python..."
-if ! pip install -r requirements.txt; then
-    echo "⚠️ Erreur avec requirements.txt, essai avec requirements_minimal.txt..."
-    pip install -r requirements_minimal.txt
-    echo "📦 Installation de Pillow séparément..."
-    pip install Pillow==10.5.0 || pip install Pillow==10.4.0 || echo "⚠️ Pillow non installé, images désactivées"
-fi
+pip install -r requirements.txt
+
+# Essayer d'installer Pillow (optionnel)
+echo "📦 Installation de Pillow (optionnel)..."
+pip install Pillow==11.3.0 || pip install Pillow==11.2.1 || echo "⚠️ Pillow non installé, images désactivées"
 
 # Vérifier que Django est installé
 echo "🔍 Vérification de Django..."
