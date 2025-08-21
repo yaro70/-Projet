@@ -7,7 +7,7 @@ import json
 
 def test_api():
     # URL de base (à modifier selon votre domaine Render)
-    base_url = "https://votre-service.onrender.com"  # Remplacez par votre URL
+    base_url = "https://projet-c2vz.onrender.com"  # Votre URL Render
     
     print("🧪 Test de l'API Pâtisserie")
     print("=" * 50)

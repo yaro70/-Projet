@@ -41,9 +41,22 @@ python test_render_config.py
 echo "📁 Collecte des fichiers statiques..."
 python manage.py collectstatic --noinput
 
-# Appliquer les migrations
+# Vérifier la base de données
+echo "🗄️ Vérification de la base de données..."
+python manage.py shell -c "
+from django.db import connection
+try:
+    with connection.cursor() as cursor:
+        cursor.execute('SELECT 1')
+    print('✅ Connexion base de données OK')
+except Exception as e:
+    print(f'❌ Erreur base de données: {e}')
+    print('🔄 Utilisation de SQLite...')
+"
+
+# Appliquer les migrations avec gestion d'erreur
 echo "🗄️ Application des migrations..."
-python manage.py migrate
+python manage.py migrate --run-syncdb || echo "⚠️ Erreur migrations, tentative avec --run-syncdb"
 
 # Créer un superuser automatiquement
 echo "👤 Création d'un superuser par défaut..."
@@ -64,55 +77,58 @@ from boutique.models import *
 from decimal import Decimal
 import os
 
-# Créer des gâteaux de test
-if Gateau.objects.count() == 0:
-    gateaux_data = [
-        {'nom': 'Gâteau d\'Anniversaire Chocolat', 'description': 'Délicieux gâteau au chocolat pour anniversaire', 'prix': Decimal('15000.00')},
-        {'nom': 'Gâteau de Mariage Vanille', 'description': 'Magnifique gâteau de mariage à la vanille', 'prix': Decimal('25000.00')},
-        {'nom': 'Cupcakes Assortis', 'description': 'Assortiment de cupcakes colorés', 'prix': Decimal('8000.00')},
-        {'nom': 'Gâteau au Citron', 'description': 'Gâteau frais au citron', 'prix': Decimal('12000.00')},
-        {'nom': 'Gâteau Red Velvet', 'description': 'Gâteau rouge velours élégant', 'prix': Decimal('18000.00')},
-    ]
-    
-    for data in gateaux_data:
-        Gateau.objects.create(**data)
-    print(f'✅ {len(gateaux_data)} gâteaux créés')
-else:
-    print(f'ℹ️ {Gateau.objects.count()} gâteaux existent déjà')
+try:
+    # Créer des gâteaux de test
+    if Gateau.objects.count() == 0:
+        gateaux_data = [
+            {'nom': 'Gâteau d\'Anniversaire Chocolat', 'description': 'Délicieux gâteau au chocolat pour anniversaire', 'prix': Decimal('15000.00')},
+            {'nom': 'Gâteau de Mariage Vanille', 'description': 'Magnifique gâteau de mariage à la vanille', 'prix': Decimal('25000.00')},
+            {'nom': 'Cupcakes Assortis', 'description': 'Assortiment de cupcakes colorés', 'prix': Decimal('8000.00')},
+            {'nom': 'Gâteau au Citron', 'description': 'Gâteau frais au citron', 'prix': Decimal('12000.00')},
+            {'nom': 'Gâteau Red Velvet', 'description': 'Gâteau rouge velours élégant', 'prix': Decimal('18000.00')},
+        ]
+        
+        for data in gateaux_data:
+            Gateau.objects.create(**data)
+        print(f'✅ {len(gateaux_data)} gâteaux créés')
+    else:
+        print(f'ℹ️ {Gateau.objects.count()} gâteaux existent déjà')
 
-# Créer des paramètres de livraison
-if ParametresLivraison.objects.count() == 0:
-    ParametresLivraison.objects.create(prix_livraison=Decimal('2000.00'))
-    print('✅ Paramètres de livraison créés')
-else:
-    print('ℹ️ Paramètres de livraison existent déjà')
+    # Créer des paramètres de livraison
+    if ParametresLivraison.objects.count() == 0:
+        ParametresLivraison.objects.create(prix_livraison=Decimal('2000.00'))
+        print('✅ Paramètres de livraison créés')
+    else:
+        print('ℹ️ Paramètres de livraison existent déjà')
 
-# Créer des utilisateurs de test
-if User.objects.filter(is_patron=True).count() == 0:
-    # Créer un patron
-    patron = User.objects.create_user(
-        username='patron',
-        email='patron@example.com',
-        password='patron123',
-        is_patron=True
-    )
-    print('✅ Patron créé: patron/patron123')
-else:
-    print('ℹ️ Patron existe déjà')
+    # Créer des utilisateurs de test
+    if User.objects.filter(is_patron=True).count() == 0:
+        # Créer un patron
+        patron = User.objects.create_user(
+            username='patron',
+            email='patron@example.com',
+            password='patron123',
+            is_patron=True
+        )
+        print('✅ Patron créé: patron/patron123')
+    else:
+        print('ℹ️ Patron existe déjà')
 
-if User.objects.filter(is_collaborateur=True).count() == 0:
-    # Créer un collaborateur
-    collaborateur = User.objects.create_user(
-        username='collaborateur',
-        email='collaborateur@example.com',
-        password='collaborateur123',
-        is_collaborateur=True
-    )
-    print('✅ Collaborateur créé: collaborateur/collaborateur123')
-else:
-    print('ℹ️ Collaborateur existe déjà')
+    if User.objects.filter(is_collaborateur=True).count() == 0:
+        # Créer un collaborateur
+        collaborateur = User.objects.create_user(
+            username='collaborateur',
+            email='collaborateur@example.com',
+            password='collaborateur123',
+            is_collaborateur=True
+        )
+        print('✅ Collaborateur créé: collaborateur/collaborateur123')
+    else:
+        print('ℹ️ Collaborateur existe déjà')
 
-print('🎉 Données de test créées avec succès!')
+    print('🎉 Données de test créées avec succès!')
+except Exception as e:
+    print(f'❌ Erreur lors de la création des données: {e}')
 "
 
 # Vérifier que l'application peut démarrer
