@@ -41,12 +41,11 @@ class Gateau(models.Model):
     ]
     
     nom = models.CharField(max_length=100)
-    type = models.CharField(max_length=20, choices=TYPE_CHOICES)
+    type = models.CharField(max_length=20, choices=TYPE_CHOICES, default='autre')
     description = models.TextField()
     prix = models.DecimalField(max_digits=8, decimal_places=2)
     image = models.ImageField(upload_to='gateaux/', blank=True, null=True)
     disponible = models.BooleanField(default=True)
-    date_creation = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return self.nom
@@ -136,7 +135,7 @@ Votre gâteau est maintenant terminé et sera bientôt livré!
 💰 Prix: {self.gateau.prix} FCFA
 🚚 Livraison: {self.prix_total - self.gateau.prix} FCFA
 💰 Total: {self.prix_total} FCFA
-📅 Date de livraison: {self.date_livraison.strftime('%d/%m/%Y à %H:%M')}
+�� Date de livraison: {self.date_livraison.strftime('%d/%m/%Y à %H:%M')}
 {self.texte_sur_gateau and f'📝 Texte: {self.texte_sur_gateau}' or ''}
 
 🚚 Notre livreur vous contactera bientôt pour la livraison.

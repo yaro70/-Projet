@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Script pour configurer les données après déploiement
+Script pour recréer la base de données proprement
 """
 
 import os
@@ -12,41 +12,43 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'patisserie_project.settings_ren
 django.setup()
 
 from django.contrib.auth import get_user_model
-from django.db import connection
+from django.core.management import execute_from_command_line
 from boutique.models import *
 
-def setup_data():
-    print("🔧 Configuration des données...")
+def reset_database():
+    print("🔄 Réinitialisation de la base de données...")
     
-    # Vérifier et corriger la structure de la base de données
+    # Supprimer et recréer les migrations
+    print("📝 Suppression des anciennes migrations...")
     try:
-        with connection.cursor() as cursor:
-            # Vérifier si date_creation existe dans Gateau
-            cursor.execute("PRAGMA table_info(boutique_gateau)")
-            columns = [col[1] for col in cursor.fetchall()]
-            
-            if 'date_creation' not in columns:
-                print("📝 Ajout de date_creation à Gateau...")
-                cursor.execute("ALTER TABLE boutique_gateau ADD COLUMN date_creation DATETIME DEFAULT CURRENT_TIMESTAMP")
-            
-            # Vérifier si contenu existe dans ArticleEvenement
-            cursor.execute("PRAGMA table_info(boutique_articleevenement)")
-            columns = [col[1] for col in cursor.fetchall()]
-            
-            if 'contenu' not in columns:
-                print("📝 Ajout de contenu à ArticleEvenement...")
-                cursor.execute("ALTER TABLE boutique_articleevenement ADD COLUMN contenu TEXT")
-            
-            if 'date_evenement' not in columns:
-                print("📝 Ajout de date_evenement à ArticleEvenement...")
-                cursor.execute("ALTER TABLE boutique_articleevenement ADD COLUMN date_evenement DATETIME")
-            
-            if 'actif' not in columns:
-                print("📝 Ajout de actif à ArticleEvenement...")
-                cursor.execute("ALTER TABLE boutique_articleevenement ADD COLUMN actif BOOLEAN DEFAULT 1")
-                
+        import shutil
+        migrations_dir = 'boutique/migrations'
+        if os.path.exists(migrations_dir):
+            for file in os.listdir(migrations_dir):
+                if file.endswith('.py') and file != '__init__.py':
+                    os.remove(os.path.join(migrations_dir, file))
+        print("✅ Anciennes migrations supprimées")
     except Exception as e:
-        print(f"⚠️ Erreur lors de la vérification de la base de données: {e}")
+        print(f"⚠️ Erreur lors de la suppression des migrations: {e}")
+    
+    # Créer de nouvelles migrations
+    print("📝 Création de nouvelles migrations...")
+    try:
+        execute_from_command_line(['manage.py', 'makemigrations', 'boutique', '--noinput'])
+        print("✅ Nouvelles migrations créées")
+    except Exception as e:
+        print(f"⚠️ Erreur lors de la création des migrations: {e}")
+    
+    # Appliquer les migrations
+    print("📝 Application des migrations...")
+    try:
+        execute_from_command_line(['manage.py', 'migrate', '--noinput'])
+        print("✅ Migrations appliquées")
+    except Exception as e:
+        print(f"⚠️ Erreur lors de l'application des migrations: {e}")
+    
+    # Créer les données de test
+    print("📝 Création des données de test...")
     
     # Créer superuser
     User = get_user_model()
@@ -80,7 +82,7 @@ def setup_data():
         User.objects.create_user('collaborateur', 'collaborateur@example.com', 'collaborateur123', is_collaborateur=True)
         print("✅ Collaborateur créé: collaborateur/collaborateur123")
     
-    print("🎉 Configuration terminée!")
+    print("🎉 Base de données réinitialisée avec succès!")
 
 if __name__ == '__main__':
-    setup_data()
+    reset_database()
