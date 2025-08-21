@@ -3,7 +3,7 @@ services:
   - type: web
     name: patisserie-backend
     env: python
-    plan: free
+    plan: starter
     buildCommand: chmod +x build.sh && ./build.sh
     startCommand: gunicorn patisserie_project.wsgi:application --bind 0.0.0.0:$PORT --timeout 120
     envVars:
@@ -24,7 +24,7 @@ services:
   - type: web
     name: patisserie-frontend
     env: static
-    plan: free
+    plan: starter
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: ./frontend/build
     envVars:
