@@ -173,6 +173,7 @@ SECURE_SSL_REDIRECT = False
 CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
 if not CORS_ALLOWED_ORIGINS or CORS_ALLOWED_ORIGINS == ['']:
     CORS_ALLOWED_ORIGINS = [
+        "https://patisserie-frontend.onrender.com",
         "https://projet-c2vz.onrender.com",
         "http://localhost:3000",
     ]
