@@ -63,23 +63,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'patisserie_project.wsgi.application'
 
-# Database - Configuration avec fallback SQLite
-DATABASE_URL = os.environ.get('DATABASE_URL')
-if DATABASE_URL:
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=DATABASE_URL,
-            conn_max_age=600,
-        )
+# Database - Configuration SQLite pour plan gratuit
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
-else:
-    # Fallback vers SQLite si pas de DATABASE_URL
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+}
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -130,27 +120,15 @@ REST_FRAMEWORK = {
     ],
 }
 
-# Configuration Channels pour WebSocket
+# Configuration Channels pour WebSocket - InMemory pour plan gratuit
 ASGI_APPLICATION = 'patisserie_project.asgi.application'
 
-# Configuration Redis pour Channels - Optionnel
-REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
-if REDIS_URL and REDIS_URL != 'redis://localhost:6379':
-    CHANNEL_LAYERS = {
-        'default': {
-            'BACKEND': 'channels_redis.core.RedisChannelLayer',
-            'CONFIG': {
-                "hosts": [REDIS_URL],
-            },
-        },
-    }
-else:
-    # Fallback vers InMemoryChannelLayer si pas de Redis
-    CHANNEL_LAYERS = {
-        'default': {
-            'BACKEND': 'channels.layers.InMemoryChannelLayer',
-        },
-    }
+# Configuration Channels avec InMemoryChannelLayer
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 # Configuration des notifications
 NOTIFICATION_TYPES = {
@@ -187,21 +165,13 @@ CORS_ALLOW_HEADERS = [
     'dnt', 'origin', 'user-agent', 'x-csrftoken', 'x-requested-with',
 ]
 
-# Cache Settings - Fallback vers LocMemCache
-if REDIS_URL and REDIS_URL != 'redis://localhost:6379':
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-            'LOCATION': REDIS_URL,
-        }
+# Cache Settings - LocMemCache pour plan gratuit
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
     }
-else:
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-            'LOCATION': 'unique-snowflake',
-        }
-    }
+}
 
 # Session Settings
 SESSION_COOKIE_HTTPONLY = True

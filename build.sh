@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Script de build automatique pour Render
+# Script de build automatique pour Render (Plan Gratuit)
 
 set -e  # Arrêter le script en cas d'erreur
 
-echo "🚀 Démarrage du build automatique..."
+echo "🚀 Démarrage du build automatique (Plan Gratuit)..."
 
 # Vérifier la version Python
 echo "🐍 Version Python:"
@@ -36,19 +36,6 @@ python manage.py check --deploy
 # Collecter les fichiers statiques
 echo "📁 Collecte des fichiers statiques..."
 python manage.py collectstatic --noinput
-
-# Vérifier la base de données
-echo "🗄️ Vérification de la base de données..."
-python manage.py shell -c "
-from django.db import connection
-try:
-    with connection.cursor() as cursor:
-        cursor.execute('SELECT 1')
-    print('✅ Connexion base de données OK')
-except Exception as e:
-    print(f'❌ Erreur base de données: {e}')
-    print('🔄 Utilisation de SQLite...')
-"
 
 # Appliquer les migrations
 echo "🗄️ Application des migrations..."
@@ -141,5 +128,5 @@ except Exception as e:
 echo "🔧 Test de démarrage de l'application..."
 python manage.py check
 
-echo "✅ Build terminé avec succès!"
+echo "✅ Build terminé avec succès! (Plan Gratuit)"
 
