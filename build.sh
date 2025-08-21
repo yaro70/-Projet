@@ -58,6 +58,18 @@ except Exception as e:
 echo "🗄️ Application des migrations..."
 python manage.py migrate --run-syncdb || echo "⚠️ Erreur migrations, tentative avec --run-syncdb"
 
+# Créer les migrations manquantes si nécessaire
+echo "🗄️ Création des migrations manquantes..."
+python manage.py makemigrations boutique || echo "⚠️ Erreur création migrations"
+
+# Appliquer à nouveau les migrations
+echo "🗄️ Application des nouvelles migrations..."
+python manage.py migrate || echo "⚠️ Erreur application migrations"
+
+# Exécuter le script de correction de base de données
+echo "🔧 Correction de la base de données..."
+python fix_database.py || echo "⚠️ Erreur correction base de données"
+
 # Créer un superuser automatiquement
 echo "👤 Création d'un superuser par défaut..."
 python manage.py shell -c "
