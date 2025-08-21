@@ -21,11 +21,12 @@ services:
         value: "https://patisserie-frontend.onrender.com,http://localhost:3000"
 
   # Service Frontend React
-  - type: static
+  - type: web
     name: patisserie-frontend
+    env: node
     plan: free
     buildCommand: cd frontend && npm install && npm run build
-    staticPublishPath: ./frontend/build
+    startCommand: cd frontend && npx serve -s build -l $PORT
     envVars:
       - key: REACT_APP_API_URL
         value: https://patisserie-backend.onrender.com
