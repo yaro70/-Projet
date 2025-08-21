@@ -12,10 +12,41 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'patisserie_project.settings_ren
 django.setup()
 
 from django.contrib.auth import get_user_model
+from django.db import connection
 from boutique.models import *
 
 def setup_data():
     print("🔧 Configuration des données...")
+    
+    # Vérifier et corriger la structure de la base de données
+    try:
+        with connection.cursor() as cursor:
+            # Vérifier si date_creation existe dans Gateau
+            cursor.execute("PRAGMA table_info(boutique_gateau)")
+            columns = [col[1] for col in cursor.fetchall()]
+            
+            if 'date_creation' not in columns:
+                print("📝 Ajout de date_creation à Gateau...")
+                cursor.execute("ALTER TABLE boutique_gateau ADD COLUMN date_creation DATETIME DEFAULT CURRENT_TIMESTAMP")
+            
+            # Vérifier si contenu existe dans ArticleEvenement
+            cursor.execute("PRAGMA table_info(boutique_articleevenement)")
+            columns = [col[1] for col in cursor.fetchall()]
+            
+            if 'contenu' not in columns:
+                print("📝 Ajout de contenu à ArticleEvenement...")
+                cursor.execute("ALTER TABLE boutique_articleevenement ADD COLUMN contenu TEXT")
+            
+            if 'date_evenement' not in columns:
+                print("📝 Ajout de date_evenement à ArticleEvenement...")
+                cursor.execute("ALTER TABLE boutique_articleevenement ADD COLUMN date_evenement DATETIME")
+            
+            if 'actif' not in columns:
+                print("📝 Ajout de actif à ArticleEvenement...")
+                cursor.execute("ALTER TABLE boutique_articleevenement ADD COLUMN actif BOOLEAN DEFAULT 1")
+                
+    except Exception as e:
+        print(f"⚠️ Erreur lors de la vérification de la base de données: {e}")
     
     # Créer superuser
     User = get_user_model()
