@@ -5,13 +5,30 @@ set -e  # Arrêter le script en cas d'erreur
 
 echo "🚀 Démarrage du build..."
 
+# Vérifier la version Python
+echo "🐍 Version Python:"
+python --version
+
+# Mettre à jour pip
+echo "📦 Mise à jour de pip..."
+pip install --upgrade pip
+
 # Installer les dépendances Python
 echo "📦 Installation des dépendances Python..."
-pip install -r requirements.txt
+if ! pip install -r requirements.txt; then
+    echo "⚠️ Erreur avec requirements.txt, essai avec requirements_minimal.txt..."
+    pip install -r requirements_minimal.txt
+    echo "📦 Installation de Pillow séparément..."
+    pip install Pillow==10.5.0 || pip install Pillow==10.4.0 || echo "⚠️ Pillow non installé, images désactivées"
+fi
 
 # Vérifier que Django est installé
 echo "🔍 Vérification de Django..."
 python -c "import django; print(f'Django version: {django.get_version()}')"
+
+# Vérifier Pillow (optionnel)
+echo "🖼️ Vérification de Pillow..."
+python -c "import PIL; print(f'Pillow version: {PIL.__version__}')" 2>/dev/null || echo "⚠️ Pillow non disponible"
 
 # Vérifier la configuration
 echo "⚙️ Vérification de la configuration..."
