@@ -14,4 +14,5 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'patisserie_project.settings_ren
 
 # Importer l'application Django
 from django.core.wsgi import get_wsgi_application
-application = get_wsgi_application()
+app = get_wsgi_application()
+application = app  # Pour compatibilité
