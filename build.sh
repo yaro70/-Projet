@@ -1,11 +1,25 @@
 #!/usr/bin/env bash
 # Script de build pour Render
 
+set -e  # Arrêter le script en cas d'erreur
+
 echo "🚀 Démarrage du build..."
 
 # Installer les dépendances Python
 echo "📦 Installation des dépendances Python..."
 pip install -r requirements.txt
+
+# Vérifier que Django est installé
+echo "🔍 Vérification de Django..."
+python -c "import django; print(f'Django version: {django.get_version()}')"
+
+# Vérifier la configuration
+echo "⚙️ Vérification de la configuration..."
+python manage.py check --deploy
+
+# Test de configuration Render
+echo "🔧 Test de configuration Render..."
+python test_render_config.py
 
 # Collecter les fichiers statiques
 echo "📁 Collecte des fichiers statiques..."
@@ -26,6 +40,10 @@ if not User.objects.filter(username='admin').exists():
 else:
     print('Superuser existe déjà')
 "
+
+# Vérifier que l'application peut démarrer
+echo "🔧 Test de démarrage de l'application..."
+python manage.py check
 
 echo "✅ Build terminé avec succès!"
 

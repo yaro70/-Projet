@@ -1,21 +1,20 @@
 """
-Configuration de production pour Render
+Configuration simplifiée pour Render
 """
 import os
 from pathlib import Path
-from decouple import config
 import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY', default='django-insecure-nr+^h5@^)lq5=d85l7#w#f4k(p(gwuq&5tr@v=f+@qfd2b84ju')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-nr+^h5@^)lq5=d85l7#w#f4k(p(gwuq&5tr@v=f+@qfd2b84ju')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
 # Application definition
 INSTALLED_APPS = [
@@ -34,7 +33,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Pour servir les fichiers statiques
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -65,14 +64,10 @@ TEMPLATES = [
 WSGI_APPLICATION = 'patisserie_project.wsgi.application'
 
 # Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-# Configuration de base de données pour Render
 DATABASES = {
     'default': dj_database_url.config(
-        default=config('DATABASE_URL', default='sqlite:///db.sqlite3'),
+        default=os.environ.get('DATABASE_URL', 'sqlite:///db.sqlite3'),
         conn_max_age=600,
-        conn_health_checks=True,
     )
 }
 
@@ -128,8 +123,8 @@ REST_FRAMEWORK = {
 # Configuration Channels pour WebSocket
 ASGI_APPLICATION = 'patisserie_project.asgi.application'
 
-# Configuration Redis pour Channels (production)
-REDIS_URL = config('REDIS_URL', default='redis://localhost:6379')
+# Configuration Redis pour Channels
+REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
@@ -151,12 +146,9 @@ NOTIFICATION_TYPES = {
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
-SECURE_HSTS_SECONDS = 31536000
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
 
-# CORS Settings pour production
-CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', default='').split(',')
+# CORS Settings
+CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
 if not CORS_ALLOWED_ORIGINS or CORS_ALLOWED_ORIGINS == ['']:
     CORS_ALLOWED_ORIGINS = [
         "https://your-frontend-domain.onrender.com",
@@ -172,7 +164,7 @@ CORS_ALLOW_HEADERS = [
     'dnt', 'origin', 'user-agent', 'x-csrftoken', 'x-requested-with',
 ]
 
-# Cache Settings pour production
+# Cache Settings
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
@@ -182,8 +174,8 @@ CACHES = {
 
 # Session Settings
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SECURE = True  # True en production avec HTTPS
-CSRF_COOKIE_SECURE = True     # True en production avec HTTPS
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 # WhiteNoise configuration
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
@@ -202,10 +194,3 @@ LOGGING = {
         'level': 'INFO',
     },
 }
-
-# Configuration pour éviter les erreurs de démarrage
-try:
-    from .settings import *
-except ImportError:
-    pass
-
