@@ -60,11 +60,11 @@ python manage.py migrate --run-syncdb || echo "⚠️ Erreur migrations, tentati
 
 # Créer les migrations manquantes si nécessaire
 echo "🗄️ Création des migrations manquantes..."
-python manage.py makemigrations boutique || echo "⚠️ Erreur création migrations"
+python manage.py makemigrations boutique --noinput || echo "⚠️ Erreur création migrations"
 
 # Appliquer à nouveau les migrations
 echo "🗄️ Application des nouvelles migrations..."
-python manage.py migrate || echo "⚠️ Erreur application migrations"
+python manage.py migrate --noinput || echo "⚠️ Erreur application migrations"
 
 # Exécuter le script de correction de base de données
 echo "🔧 Correction de la base de données..."

@@ -26,14 +26,6 @@ def fix_database():
             cursor.execute('SELECT 1')
         print("✅ Connexion base de données OK")
         
-        # Créer les migrations
-        print("📝 Création des migrations...")
-        execute_from_command_line(['manage.py', 'makemigrations', 'boutique'])
-        
-        # Appliquer les migrations
-        print("📝 Application des migrations...")
-        execute_from_command_line(['manage.py', 'migrate'])
-        
         # Vérifier les tables
         print("🔍 Vérification des tables...")
         with connection.cursor() as cursor:
@@ -50,18 +42,111 @@ def fix_database():
             cursor.execute("PRAGMA table_info(boutique_gateau)")
             columns = cursor.fetchall()
             column_names = [col[1] for col in columns]
-            print(f"📋 Colonnes: {column_names}")
+            print(f"📋 Colonnes Gateau: {column_names}")
             
             if 'date_creation' not in column_names:
                 print("⚠️ Colonne date_creation manquante, ajout...")
                 cursor.execute("ALTER TABLE boutique_gateau ADD COLUMN date_creation DATETIME")
                 print("✅ Colonne date_creation ajoutée")
         
+        # Vérifier la structure de la table ArticleEvenement
+        print("🔍 Vérification de la table ArticleEvenement...")
+        with connection.cursor() as cursor:
+            cursor.execute("PRAGMA table_info(boutique_articleevenement)")
+            columns = cursor.fetchall()
+            column_names = [col[1] for col in columns]
+            print(f"📋 Colonnes ArticleEvenement: {column_names}")
+            
+            # Gérer le renommage description -> contenu
+            if 'description' in column_names and 'contenu' not in column_names:
+                print("⚠️ Renommage description -> contenu...")
+                cursor.execute("ALTER TABLE boutique_articleevenement RENAME COLUMN description TO contenu")
+                print("✅ Colonne description renommée en contenu")
+            elif 'contenu' not in column_names:
+                print("⚠️ Colonne contenu manquante, ajout...")
+                cursor.execute("ALTER TABLE boutique_articleevenement ADD COLUMN contenu TEXT")
+                print("✅ Colonne contenu ajoutée")
+        
+        # Ajouter les colonnes manquantes pour ArticleEvenement
+        missing_columns = []
+        if 'date_evenement' not in column_names:
+            missing_columns.append("date_evenement DATETIME")
+        if 'actif' not in column_names:
+            missing_columns.append("actif BOOLEAN DEFAULT 1")
+        
+        for column_def in missing_columns:
+            column_name = column_def.split()[0]
+            print(f"⚠️ Colonne {column_name} manquante, ajout...")
+            cursor.execute(f"ALTER TABLE boutique_articleevenement ADD COLUMN {column_def}")
+            print(f"✅ Colonne {column_name} ajoutée")
+        
         # Mettre à jour les gâteaux existants
         print("🔄 Mise à jour des gâteaux existants...")
         from django.utils import timezone
         Gateau.objects.all().update(date_creation=timezone.now())
         print("✅ Gâteaux mis à jour")
+        
+        # Créer les migrations de manière non-interactive
+        print("📝 Création des migrations (non-interactive)...")
+        try:
+            # Supprimer les anciennes migrations non appliquées
+            import os
+            migrations_dir = 'boutique/migrations'
+            if os.path.exists(migrations_dir):
+                for file in os.listdir(migrations_dir):
+                    if file.endswith('.py') and file != '__init__.py':
+                        file_path = os.path.join(migrations_dir, file)
+                        if os.path.isfile(file_path):
+                            os.remove(file_path)
+                            print(f"🗑️ Migration supprimée: {file}")
+            
+            # Créer une nouvelle migration
+            execute_from_command_line(['manage.py', 'makemigrations', 'boutique', '--empty'])
+            
+            # Créer le contenu de la migration manuellement
+            migration_content = '''
+from django.db import migrations
+
+class Migration(migrations.Migration):
+    dependencies = [
+        ('boutique', '0001_initial'),
+    ]
+
+    operations = [
+        migrations.RunSQL(
+            "ALTER TABLE boutique_gateau ADD COLUMN date_creation DATETIME;",
+            "ALTER TABLE boutique_gateau DROP COLUMN date_creation;"
+        ),
+        migrations.RunSQL(
+            "ALTER TABLE boutique_articleevenement ADD COLUMN contenu TEXT;",
+            "ALTER TABLE boutique_articleevenement DROP COLUMN contenu;"
+        ),
+        migrations.RunSQL(
+            "ALTER TABLE boutique_articleevenement ADD COLUMN date_evenement DATETIME;",
+            "ALTER TABLE boutique_articleevenement DROP COLUMN date_evenement;"
+        ),
+        migrations.RunSQL(
+            "ALTER TABLE boutique_articleevenement ADD COLUMN actif BOOLEAN DEFAULT 1;",
+            "ALTER TABLE boutique_articleevenement DROP COLUMN actif;"
+        ),
+    ]
+'''
+            
+            # Écrire la migration
+            migration_files = [f for f in os.listdir(migrations_dir) if f.endswith('.py') and f != '__init__.py']
+            if migration_files:
+                latest_migration = sorted(migration_files)[-1]
+                migration_path = os.path.join(migrations_dir, latest_migration)
+                with open(migration_path, 'w') as f:
+                    f.write(migration_content)
+                print(f"✅ Migration créée: {latest_migration}")
+            
+        except Exception as e:
+            print(f"⚠️ Erreur création migration: {e}")
+        
+        # Appliquer les migrations
+        print("📝 Application des migrations...")
+        execute_from_command_line(['manage.py', 'migrate'])
         
         # Vérifier les données
         print("📊 Vérification des données...")
