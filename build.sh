@@ -25,10 +25,6 @@ pip install Pillow==11.3.0 || echo "⚠️ Pillow non installé, images désacti
 echo "🔍 Vérification de Django..."
 python -c "import django; print(f'Django version: {django.get_version()}')"
 
-# Vérifier Pillow
-echo "🖼️ Vérification de Pillow..."
-python -c "import PIL; print(f'Pillow version: {PIL.__version__}')" 2>/dev/null || echo "⚠️ Pillow non disponible"
-
 # Vérifier la configuration
 echo "⚙️ Vérification de la configuration..."
 python manage.py check --deploy
@@ -53,22 +49,22 @@ else:
     print('ℹ️ Superuser existe déjà')
 "
 
-# Créer les données de test automatiquement
+# Créer les données de test de manière sécurisée
 echo "📊 Création des données de test..."
 python manage.py shell -c "
-from boutique.models import *
-from decimal import Decimal
-from django.utils import timezone
-
 try:
+    from boutique.models import *
+    from decimal import Decimal
+    from django.utils import timezone
+    
     # Créer des gâteaux de test
     if Gateau.objects.count() == 0:
         gateaux_data = [
-            {'nom': 'Gâteau d\'Anniversaire Chocolat', 'description': 'Délicieux gâteau au chocolat pour anniversaire', 'prix': Decimal('15000.00'), 'type': 'anniversaire'},
-            {'nom': 'Gâteau de Mariage Vanille', 'description': 'Magnifique gâteau de mariage à la vanille', 'prix': Decimal('25000.00'), 'type': 'mariage'},
-            {'nom': 'Cupcakes Assortis', 'description': 'Assortiment de cupcakes colorés', 'prix': Decimal('8000.00'), 'type': 'autre'},
-            {'nom': 'Gâteau au Citron', 'description': 'Gâteau frais au citron', 'prix': Decimal('12000.00'), 'type': 'autre'},
-            {'nom': 'Gâteau Red Velvet', 'description': 'Gâteau rouge velours élégant', 'prix': Decimal('18000.00'), 'type': 'anniversaire'},
+            {'nom': 'Gâteau d\'Anniversaire Chocolat', 'description': 'Délicieux gâteau au chocolat pour anniversaire', 'prix': Decimal('15000.00')},
+            {'nom': 'Gâteau de Mariage Vanille', 'description': 'Magnifique gâteau de mariage à la vanille', 'prix': Decimal('25000.00')},
+            {'nom': 'Cupcakes Assortis', 'description': 'Assortiment de cupcakes colorés', 'prix': Decimal('8000.00')},
+            {'nom': 'Gâteau au Citron', 'description': 'Gâteau frais au citron', 'prix': Decimal('12000.00')},
+            {'nom': 'Gâteau Red Velvet', 'description': 'Gâteau rouge velours élégant', 'prix': Decimal('18000.00')},
         ]
         
         for data in gateaux_data:
@@ -107,21 +103,10 @@ try:
     else:
         print('ℹ️ Collaborateur existe déjà')
 
-    # Créer un article de test
-    if ArticleEvenement.objects.count() == 0:
-        ArticleEvenement.objects.create(
-            titre='Bienvenue dans notre pâtisserie',
-            contenu='Découvrez nos délicieux gâteaux faits maison avec amour et passion.',
-            date_evenement=timezone.now(),
-            actif=True
-        )
-        print('✅ Article de test créé')
-    else:
-        print('ℹ️ Articles existent déjà')
-
     print('🎉 Données de test créées avec succès!')
 except Exception as e:
     print(f'❌ Erreur lors de la création des données: {e}')
+    print('⚠️ Continuation du build...')
 "
 
 # Vérifier que l'application peut démarrer
