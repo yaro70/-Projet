@@ -35,7 +35,7 @@ services:
     staticPublishPath: ./frontend/build
     envVars:
       - key: REACT_APP_API_URL
-        value: https://projet-c2vz.onrender.com
+        value: https://patisserie-backend.onrender.com
       - key: REACT_APP_WS_URL
-        value: wss://projet-c2vz.onrender.com
+        value: wss://patisserie-backend.onrender.com
 
