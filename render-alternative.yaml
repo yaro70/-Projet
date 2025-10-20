@@ -1,0 +1,44 @@
+# Configuration Render alternative avec script de build
+# Utilise un script bash pour éviter les problèmes de commande
+
+services:
+  # Backend Django
+  - type: web
+    name: patisserie-backend
+    env: python
+    plan: free
+    rootDir: backend
+    buildCommand: |
+      pip install -r requirements.txt
+    preDeployCommand: |
+      python manage.py migrate --noinput && \
+      python manage.py collectstatic --noinput
+    startCommand: |
+      gunicorn patisserie_project.wsgi:application --bind 0.0.0.0:$PORT --timeout 120
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.2
+      - key: DJANGO_SETTINGS_MODULE
+        value: patisserie_project.settings_render
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: patisserie-backend.onrender.com,patisserie-frontend.onrender.com
+
+  # Frontend React avec script de build alternatif
+  - type: web
+    name: patisserie-frontend
+    env: node
+    plan: free
+    rootDir: frontend
+    buildCommand: |
+      chmod +x build.sh && ./build.sh
+    startCommand: |
+      npx serve -s build -l $PORT
+    envVars:
+      - key: NODE_VERSION
+        value: 20.11.1
+      - key: REACT_APP_API_URL
+        value: https://patisserie-backend.onrender.com
+      - key: REACT_APP_WS_URL
+        value: wss://patisserie-backend.onrender.com
