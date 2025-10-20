@@ -5,10 +5,11 @@ services:
     plan: free
     rootDir: backend
     buildCommand: |
-      pip install -r requirements.txt && \
-      python manage.py collectstatic --noinput || true
-    startCommand: |
+      pip install -r requirements.txt
+    preDeployCommand: |
       python manage.py migrate --noinput && \
+      python manage.py collectstatic --noinput
+    startCommand: |
       gunicorn patisserie_project.wsgi:application --bind 0.0.0.0:$PORT --timeout 120
     envVars:
       - key: PYTHON_VERSION
@@ -24,10 +25,12 @@ services:
     plan: free
     rootDir: frontend
     buildCommand: |
-      npm install npm install npm ci && npm run buildnpm ci && npm run build npm run buildnpm install npm ci && npm run buildnpm ci && npm run build npm run build npm run build
+      npm ci && npm run build
     startCommand: |
       npx serve -s build -l $PORT
     envVars:
+      - key: NODE_VERSION
+        value: 20.11.1
       - key: REACT_APP_API_URL
         value: https://patisserie-backend.onrender.com
       - key: REACT_APP_WS_URL
