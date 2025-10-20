@@ -50,6 +50,7 @@ class GaleriePhotoSerializer(serializers.ModelSerializer):
         if obj.image:
             request = self.context.get('request')
             if request:
-                return request.build_absolute_uri(obj.image.url)
-            return obj.image.url
+                # Utiliser notre nouvelle route /api/images/ au lieu de /media/
+                return request.build_absolute_uri(f'/api/images{obj.image.url}')
+            return f'/api/images{obj.image.url}'
         return None
