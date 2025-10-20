@@ -14,7 +14,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-nr+^h5@^)lq5=d85l7#w#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'patisserie-backend.onrender.com,patisserie-frontend.onrender.com').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'patisserie-backend-mm13.onrender.com,patisserie-frontend.onrender.com').split(',')
 
 # Application definition
 INSTALLED_APPS = [
@@ -152,6 +152,7 @@ CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
 if not CORS_ALLOWED_ORIGINS or CORS_ALLOWED_ORIGINS == ['']:
     CORS_ALLOWED_ORIGINS = [
         "https://patisserie-frontend.onrender.com",
+        "https://patisserie-backend-mm13.onrender.com",
         "https://projet-c2vz.onrender.com",
         "http://localhost:3000",
     ]
