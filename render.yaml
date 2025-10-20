@@ -24,7 +24,7 @@ services:
     plan: free
     rootDir: frontend
     buildCommand: |
-      npm install npm ci && npm run buildnpm ci && npm run build npm run build
+      npm install npm install npm ci && npm run buildnpm ci && npm run build npm run buildnpm install npm ci && npm run buildnpm ci && npm run build npm run build npm run build
     startCommand: |
       npx serve -s build -l $PORT
     envVars:
