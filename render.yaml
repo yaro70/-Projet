@@ -1,3 +1,7 @@
+# Configuration Render pour le projet Patisserie
+# Ce fichier définit les services backend et frontend
+# Version corrigée - Build command fixée définitivement
+
 services:
   # Backend Django
   - type: web
@@ -22,7 +26,7 @@ services:
       - key: ALLOWED_HOSTS
         value: patisserie-backend.onrender.com,patisserie-frontend.onrender.com
 
-  # Frontend React
+  # Frontend React - COMMANDE DE BUILD CORRIGÉE
   - type: web
     name: patisserie-frontend
     env: node
