@@ -67,9 +67,7 @@ urlpatterns = [
     path('api/qr-code/<int:commande_id>/send/', send_qr_code_to_client),
 ]
 
-# Ajouter les URLs pour les fichiers médias en développement
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-else:
-    # En production, servir les médias via WhiteNoise
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Ajouter les URLs pour les fichiers médias
+# En production avec WhiteNoise, les médias sont servis automatiquement
+# Mais nous devons quand même ajouter la route pour Django
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
