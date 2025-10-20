@@ -184,6 +184,10 @@ CSRF_COOKIE_SECURE = False     # Désactivé temporairement
 # WhiteNoise configuration
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# Configuration pour servir les fichiers media en production
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_AUTOREFRESH = True
+
 # Logging
 LOGGING = {
     'version': 1,
