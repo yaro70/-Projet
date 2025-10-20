@@ -233,7 +233,7 @@ temp/
 # =============================================================================
 
 # Django media files
-media/
+# media/  # Commenté pour permettre le déploiement sur Render
 staticfiles/
 
 # User uploads
