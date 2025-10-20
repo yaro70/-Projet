@@ -22,41 +22,13 @@ patisserie_project/
 │   │   ├── config.js      # Configuration API
 │   │   └── App.js
 │   └── package.json
-├── docs/                   # Documentation complète
+├── docs/                   # Documentation
 ├── scripts/               # Scripts utilitaires
 ├── deploy/                # Configuration déploiement
 └── README.md
 ```
 
-## 🚀 Démarrage Rapide
-
-### Installation Automatique
-```bash
-# Configuration complète en une commande
-python scripts/setup.py
-```
-
-### Installation Manuelle
-
-#### Backend
-```bash
-cd backend
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# ou venv\Scripts\activate  # Windows
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py runserver
-```
-
-#### Frontend
-```bash
-cd frontend
-npm install
-npm start
-```
-
-## 🌐 Déploiement sur Render
+## 🚀 Déploiement Rapide
 
 ### Option 1 : Déploiement Automatique (Recommandé)
 1. Connectez votre repo GitHub à Render
@@ -65,8 +37,16 @@ npm start
 
 ### Option 2 : Déploiement Manuel
 ```bash
-# Utiliser le script de déploiement
-bash scripts/deploy.sh
+# Backend
+cd backend
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+
+# Frontend
+cd frontend
+npm install
+npm start
 ```
 
 ## 🔑 Accès par Défaut
@@ -79,11 +59,11 @@ bash scripts/deploy.sh
 
 ## 📚 Documentation Complète
 
-- [📖 Guide d'installation](docs/INSTALLATION.md)
-- [⚙️ Configuration](docs/CONFIGURATION.md)
-- [📡 API Documentation](docs/API.md)
-- [🚀 Déploiement](docs/DEPLOYMENT.md)
-- [👨‍💻 Développement](docs/DEVELOPMENT.md)
+- [Guide d'installation](docs/INSTALLATION.md)
+- [Configuration](docs/CONFIGURATION.md)
+- [API Documentation](docs/API.md)
+- [Déploiement](docs/DEPLOYMENT.md)
+- [Développement](docs/DEVELOPMENT.md)
 
 ## 🎯 Fonctionnalités
 
@@ -103,29 +83,7 @@ bash scripts/deploy.sh
 - **Cache** : Redis (prod)
 - **Déploiement** : Render, Gunicorn
 
-## 🌐 URLs de Développement
-
-- **Frontend** : http://localhost:3000
-- **Backend API** : http://localhost:8000/api/
-- **Admin Django** : http://localhost:8000/admin/
-
-## 📊 Données de Test
-
-Le système crée automatiquement :
-- 3 gâteaux d'exemple
-- Utilisateurs de test (patron, collaborateur)
-- Paramètres de livraison
-
-## 🔧 Scripts Utilitaires
-
-- `python scripts/setup.py` - Configuration automatique
-- `bash scripts/deploy.sh` - Déploiement sur Render
-- `python scripts/simple_build.py` - Build simplifié
-
 ## 📞 Support
 
 Pour toute question ou problème, consultez la documentation dans le dossier `docs/`.
 
----
-
-**🎉 Aucune configuration manuelle requise ! Le déploiement est entièrement automatique.**

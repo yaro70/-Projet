@@ -1,0 +1,66 @@
+services:
+  - type: web
+    name: patisserie-backend
+    env: python
+    rootDir: backend
+    plan: free
+    buildCommand: |
+      pip install -r requirements.txt
+    preDeployCommand: |
+      python manage.py migrate --noinput && \
+      python manage.py collectstatic --noinput
+    startCommand: |
+      gunicorn patisserie_project.wsgi:application --bind 0.0.0.0:$PORT --timeout 120
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.2
+      - key: DJANGO_SETTINGS_MODULE
+        value: patisserie_project.settings_render
+      - key: SECRET_KEY
+        generateValue: true
+
+  - type: web
+    name: patisserie-frontend
+    env: node
+    rootDir: frontend
+    plan: free
+    buildCommand: |
+      npm ci && npm run build
+    startCommand: |
+      npx serve -s build -l $PORT
+    envVars:
+      - key: REACT_APP_API_URL
+        # Remplacez l'URL ci-dessous par l'URL publique du backend après le premier déploiement
+        value: https://patisserie-backend.onrender.com
+      - key: REACT_APP_WS_URL
+        value: wss://patisserie-backend.onrender.com
+services:
+  # Service Backend Django
+  - type: web
+    name: patisserie-backend
+    env: python
+    plan: free
+    buildCommand: cd backend && pip install -r requirements.txt && python manage.py migrate && python manage.py collectstatic --noinput
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: backend.patisserie_project.settings_render
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: false
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+
+  # Service Frontend React
+  - type: web
+    name: patisserie-frontend
+    env: node
+    plan: free
+    buildCommand: cd frontend && npm install && npm run build
+    startCommand: cd frontend && npx serve -s build -l $PORT
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://patisserie-backend.onrender.com
+      - key: REACT_APP_WS_URL
+        value: wss://patisserie-backend.onrender.com
+
