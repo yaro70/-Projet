@@ -24,7 +24,7 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: ALLOWED_HOSTS
-        value: patisserie-backend-mm13.onrender.com,patisserie-frontend.onrender.com
+        value: patisserie-backend-mm13.onrender.com,patisserie-frontend-mm13.onrender.com
 
   # Frontend React - COMMANDE DE BUILD CORRIGÉE
   - type: web
