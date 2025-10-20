@@ -23,7 +23,7 @@ from boutique.views import (
     create_article, get_notifications, mark_notification_read, 
     mark_all_notifications_read, galerie_photos, ajouter_photo_galerie,
     modifier_photo_galerie, supprimer_photo_galerie, scan_qr_code,
-    get_qr_code, send_qr_code_to_client, generate_qr_code
+    get_qr_code, send_qr_code_to_client, generate_qr_code, serve_image
 )
 from rest_framework.routers import DefaultRouter
 from boutique.views import *
@@ -65,6 +65,8 @@ urlpatterns = [
     path('api/qr-code/<int:commande_id>/', get_qr_code),
     path('api/qr-code/<int:commande_id>/generate/', generate_qr_code),
     path('api/qr-code/<int:commande_id>/send/', send_qr_code_to_client),
+    # URL pour servir les images
+    path('api/images/<path:path>', serve_image, name='serve_image'),
 ]
 
 # Ajouter les URLs pour les fichiers médias

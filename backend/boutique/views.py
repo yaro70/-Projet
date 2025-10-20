@@ -965,3 +965,43 @@ Merci pour votre confiance! 🍰"""
     except Exception as e:
         return Response({'error': f'Erreur: {str(e)}'}, status=500)
 
+
+# Vue pour servir les images directement
+from django.http import HttpResponse, Http404
+from django.conf import settings
+import os
+import mimetypes
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def serve_image(request, path):
+    """
+    Vue pour servir les images depuis le dossier media
+    """
+    try:
+        # Construire le chemin complet vers l'image
+        image_path = os.path.join(settings.MEDIA_ROOT, path)
+        
+        # Vérifier que le fichier existe
+        if not os.path.exists(image_path):
+            raise Http404("Image not found")
+        
+        # Déterminer le type MIME
+        content_type, _ = mimetypes.guess_type(image_path)
+        if not content_type:
+            content_type = 'application/octet-stream'
+        
+        # Lire le fichier
+        with open(image_path, 'rb') as f:
+            image_data = f.read()
+        
+        # Retourner la réponse avec les bons headers
+        response = HttpResponse(image_data, content_type=content_type)
+        response['Content-Length'] = len(image_data)
+        response['Cache-Control'] = 'public, max-age=3600'  # Cache 1 heure
+        
+        return response
+        
+    except Exception as e:
+        raise Http404(f"Error serving image: {str(e)}")
+
