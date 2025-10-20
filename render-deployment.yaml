@@ -1,3 +1,6 @@
+# Configuration Render pour le projet Patisserie
+# Ce fichier définit les services backend et frontend
+
 services:
   # Backend Django
   - type: web
