@@ -1,0 +1,7 @@
+<svg width="300" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="200" fill="#f5f5f5"/>
+  <rect x="10" y="10" width="280" height="180" fill="#e0e0e0" stroke="#ccc" stroke-width="2"/>
+  <circle cx="150" cy="80" r="30" fill="#8B4513"/>
+  <rect x="120" y="110" width="60" height="40" fill="#8B4513" rx="5"/>
+  <text x="150" y="170" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#666">🎂 Gâteau</text>
+</svg>
