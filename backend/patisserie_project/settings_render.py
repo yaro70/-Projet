@@ -147,16 +147,8 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = False
 SECURE_HSTS_PRELOAD = False
 SECURE_SSL_REDIRECT = False
 
-# CORS Settings
-CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
-if not CORS_ALLOWED_ORIGINS or CORS_ALLOWED_ORIGINS == ['']:
-    CORS_ALLOWED_ORIGINS = [
-        "https://patisserie-frontend.onrender.com",
-        "https://patisserie-backend-mm13.onrender.com",
-        "https://projet-c2vz.onrender.com",
-        "http://localhost:3000",
-    ]
-
+# CORS Settings - Configuration permissive pour tous les appareils
+CORS_ALLOW_ALL_ORIGINS = True  # Permet l'accès depuis tous les domaines
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = [
     'DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT',
@@ -165,6 +157,16 @@ CORS_ALLOW_HEADERS = [
     'accept', 'accept-encoding', 'authorization', 'content-type',
     'dnt', 'origin', 'user-agent', 'x-csrftoken', 'x-requested-with',
 ]
+
+# Configuration alternative avec domaines spécifiques (commentée)
+# CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
+# if not CORS_ALLOWED_ORIGINS or CORS_ALLOWED_ORIGINS == ['']:
+#     CORS_ALLOWED_ORIGINS = [
+#         "https://patisserie-frontend.onrender.com",
+#         "https://patisserie-backend-mm13.onrender.com",
+#         "https://projet-c2vz.onrender.com",
+#         "http://localhost:3000",
+#     ]
 
 # Cache Settings - LocMemCache pour plan gratuit
 CACHES = {
