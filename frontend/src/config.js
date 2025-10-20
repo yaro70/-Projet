@@ -1,10 +1,14 @@
 // Configuration pour l'API et WebSocket
 const config = {
-  // URL de l'API backend - Utilise l'URL Render par défaut
-  API_URL: process.env.REACT_APP_API_URL || 'https://patisserie-backend.onrender.com',
+  // URL de l'API backend - Force l'URL Render en production
+  API_URL: process.env.NODE_ENV === 'production' 
+    ? 'https://patisserie-backend.onrender.com'
+    : (process.env.REACT_APP_API_URL || 'http://localhost:8000'),
   
   // URL WebSocket pour les notifications en temps réel
-  WS_URL: process.env.REACT_APP_WS_URL || 'wss://patisserie-backend.onrender.com',
+  WS_URL: process.env.NODE_ENV === 'production'
+    ? 'wss://patisserie-backend.onrender.com'
+    : (process.env.REACT_APP_WS_URL || 'ws://localhost:8000'),
   
   // Configuration des endpoints
   ENDPOINTS: {
