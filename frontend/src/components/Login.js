@@ -38,7 +38,7 @@ const Login = () => {
       console.log('🔍 Tentative de connexion avec:', credentials);
       
       // URL directe sans config
-      const url = 'http://localhost:8000/api/login/';
+      const url = 'https://patisserie-backend.onrender.com/api/login/';
       console.log('🔍 URL:', url);
       
       const response = await fetch(url, {

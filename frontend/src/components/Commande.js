@@ -22,11 +22,11 @@ const Commande = () => {
   });
   
   useEffect(() => {
-    axios.get(`http://localhost:8000/api/gateaux/${gateauId}/`)
+    axios.get(`https://patisserie-backend.onrender.com/api/gateaux/${gateauId}/`)
       .then(res => setGateau(res.data))
       .catch(err => console.log(err));
     
-    axios.get('http://localhost:8000/api/parametres/')
+    axios.get('https://patisserie-backend.onrender.com/api/parametres/')
       .then(res => {
         if (res.data.length > 0) {
           setPrixLivraison(parseFloat(res.data[0].prix_livraison));
@@ -75,7 +75,7 @@ const Commande = () => {
     try {
       console.log('Envoi de la commande:', commandeData);
       
-      const res = await axios.post('http://localhost:8000/api/create-commande/', commandeData);
+      const res = await axios.post('https://patisserie-backend.onrender.com/api/create-commande/', commandeData);
       console.log('Réponse de l\'API:', res.data);
       
       // Afficher le message de succès avec les instructions
@@ -97,7 +97,7 @@ const Commande = () => {
     
     try {
       // Récupérer le numéro du patron depuis les paramètres
-      const response = await axios.get('http://localhost:8000/api/parametres/');
+      const response = await axios.get('https://patisserie-backend.onrender.com/api/parametres/');
       const numeroPatron = response.data.length > 0 ? response.data[0].numero_patron : "2250123456789";
       
       const message = `Bonjour! J'ai passé une commande de gâteau:
@@ -153,7 +153,7 @@ J'ai effectué le dépôt et je souhaite envoyer la capture d'écran.`;
             <CardMedia
               component="img"
               height="240"
-              image={gateau.image ? `http://localhost:8000${gateau.image}` : '/default-cake.jpg'}
+              image={gateau.image ? `https://patisserie-backend.onrender.com${gateau.image}` : '/default-cake.jpg'}
               alt={gateau.nom}
               sx={{ objectFit: 'cover', width: '100%' }}
             />

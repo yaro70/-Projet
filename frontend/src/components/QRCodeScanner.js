@@ -95,7 +95,7 @@ const QRCodeScanner = ({ open, onClose }) => {
       setError(null);
       
       // Envoyer les données du QR code au backend
-      const response = await axios.post('http://localhost:8000/api/qr-code/scan/', {
+      const response = await axios.post('https://patisserie-backend.onrender.com/api/qr-code/scan/', {
         qr_data: qrData
       }, {
         headers: {

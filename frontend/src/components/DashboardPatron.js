@@ -64,10 +64,10 @@ const DashboardPatron = () => {
       const token = localStorage.getItem('token');
       const headers = token ? { 'Authorization': `Token ${token}` } : {};
       
-      const gRes = await axios.get('http://localhost:8000/api/gateaux/');
-      const cRes = await axios.get('http://localhost:8000/api/commandes/', { headers });
-      const lRes = await axios.get('http://localhost:8000/api/parametres/');
-      const aRes = await axios.get('http://localhost:8000/api/evenements/');
+      const gRes = await axios.get('https://patisserie-backend.onrender.com/api/gateaux/');
+      const cRes = await axios.get('https://patisserie-backend.onrender.com/api/commandes/', { headers });
+      const lRes = await axios.get('https://patisserie-backend.onrender.com/api/parametres/');
+      const aRes = await axios.get('https://patisserie-backend.onrender.com/api/evenements/');
       
       setGateaux(gRes.data);
       setCommandes(cRes.data);
@@ -87,7 +87,7 @@ const DashboardPatron = () => {
       const token = localStorage.getItem('token');
       const headers = token ? { 'Authorization': `Token ${token}` } : {};
       
-      const response = await axios.get('http://localhost:8000/api/statistiques/', { headers });
+      const response = await axios.get('https://patisserie-backend.onrender.com/api/statistiques/', { headers });
       setStatistiques(response.data);
     } catch (err) {
       console.error('Erreur lors du chargement des statistiques:', err);
@@ -102,13 +102,13 @@ const DashboardPatron = () => {
       const token = localStorage.getItem('token');
       const headers = token ? { 'Authorization': `Token ${token}` } : {};
       
-      await axios.patch(`http://localhost:8000/api/commandes/${id}/`, { status }, { headers });
+      await axios.patch(`https://patisserie-backend.onrender.com/api/commandes/${id}/`, { status }, { headers });
       
       // Si la commande est validée, envoyer automatiquement le message WhatsApp
       if (status === 'validee') {
         try {
           const whatsappResponse = await axios.post(
-            `http://localhost:8000/api/commandes/${id}/send-whatsapp-validation/`, 
+            `https://patisserie-backend.onrender.com/api/commandes/${id}/send-whatsapp-validation/`, 
             {}, 
             { headers }
           );
@@ -140,7 +140,7 @@ const DashboardPatron = () => {
       
       // 1. Générer le QR code
       const generateResponse = await axios.post(
-        `http://localhost:8000/api/qr-code/${commandeId}/generate/`,
+        `https://patisserie-backend.onrender.com/api/qr-code/${commandeId}/generate/`,
         {},
         { headers }
       );
@@ -150,7 +150,7 @@ const DashboardPatron = () => {
         
         // 2. Envoyer le QR code sur WhatsApp
         const sendResponse = await axios.post(
-          `http://localhost:8000/api/qr-code/${commandeId}/send/`,
+          `https://patisserie-backend.onrender.com/api/qr-code/${commandeId}/send/`,
           {},
           { headers }
         );
@@ -182,7 +182,7 @@ const DashboardPatron = () => {
       formData.append(key, newGateau[key]);
     }
     try {
-      await axios.post('http://localhost:8000/api/gateaux/', formData, {
+      await axios.post('https://patisserie-backend.onrender.com/api/gateaux/', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       setDialogOpen(false);
@@ -207,14 +207,14 @@ const DashboardPatron = () => {
         return;
       }
 
-      const res = await axios.get('http://localhost:8000/api/parametres/');
+      const res = await axios.get('https://patisserie-backend.onrender.com/api/parametres/');
       if (res.data.length) {
-        await axios.patch(`http://localhost:8000/api/parametres/${res.data[0].id}/`, { 
+        await axios.patch(`https://patisserie-backend.onrender.com/api/parametres/${res.data[0].id}/`, { 
           prix_livraison: prix.toString(),
           numero_patron: numeroPatron.trim()
         });
       } else {
-        await axios.post(`http://localhost:8000/api/parametres/`, { 
+        await axios.post(`https://patisserie-backend.onrender.com/api/parametres/`, { 
           prix_livraison: prix.toString(),
           numero_patron: numeroPatron.trim()
         });
@@ -248,7 +248,7 @@ const DashboardPatron = () => {
       const token = localStorage.getItem('token');
       const headers = token ? { 'Authorization': `Token ${token}` } : {};
 
-      await axios.post('http://localhost:8000/api/create-collaborateur/', newCollaborateur, { headers });
+      await axios.post('https://patisserie-backend.onrender.com/api/create-collaborateur/', newCollaborateur, { headers });
       
       alert('Collaborateur créé avec succès!');
       setCollaborateurDialogOpen(false);
@@ -299,7 +299,7 @@ const DashboardPatron = () => {
         formData.append('image', newArticle.image);
       }
 
-      await axios.post('http://localhost:8000/api/create-article/', formData, { 
+      await axios.post('https://patisserie-backend.onrender.com/api/create-article/', formData, { 
         headers: {
           ...headers,
           'Content-Type': 'multipart/form-data'
@@ -801,7 +801,7 @@ const DashboardPatron = () => {
                       {article.image && (
                         <Box sx={{ 
                           height: 200, 
-                          backgroundImage: `url(http://localhost:8000${article.image})`,
+                          backgroundImage: `url(https://patisserie-backend.onrender.com${article.image})`,
                           backgroundSize: 'cover',
                           backgroundPosition: 'center',
                           backgroundRepeat: 'no-repeat'

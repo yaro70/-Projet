@@ -28,7 +28,7 @@ const Home = () => {
 
   const fetchArticles = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/evenements/');
+      const response = await axios.get('https://patisserie-backend.onrender.com/api/evenements/');
       setArticles(response.data || []);
     } catch (err) {
       console.error('Erreur lors du chargement des articles:', err);
@@ -38,7 +38,7 @@ const Home = () => {
 
   const fetchGalerie = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/galerie/');
+      const response = await axios.get('https://patisserie-backend.onrender.com/api/galerie/');
       const photos = response.data?.photos || [];
       setGaleriePhotos(photos.slice(0, 6)); // Afficher seulement 6 photos
     } catch (err) {
@@ -120,7 +120,7 @@ const Home = () => {
                     <CardMedia
                       component="img"
                       height="200"
-                      image={`http://localhost:8000${article.image}`}
+                      image={`https://patisserie-backend.onrender.com${article.image}`}
                       alt={article.titre}
                       sx={{ objectFit: 'cover' }}
                     />
@@ -162,7 +162,7 @@ const Home = () => {
                   <CardMedia
                     component="img"
                     height="200"
-                    image={`http://localhost:8000${photo.image}`}
+                    image={`https://patisserie-backend.onrender.com${photo.image}`}
                     alt={`Photo ${index + 1}`}
                     sx={{ objectFit: 'cover' }}
                   />

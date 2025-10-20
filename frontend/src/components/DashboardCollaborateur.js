@@ -29,7 +29,7 @@ const DashboardCollaborateur = () => {
       const token = localStorage.getItem('token');
       const headers = token ? { 'Authorization': `Token ${token}` } : {};
       
-      const response = await axios.get('http://localhost:8000/api/commandes/', { headers });
+      const response = await axios.get('https://patisserie-backend.onrender.com/api/commandes/', { headers });
       
       // Filtrer pour ne montrer que les commandes validées
       const commandesValidees = response.data.filter(cmd => cmd.status === 'validee');
@@ -50,7 +50,7 @@ const DashboardCollaborateur = () => {
       
       // Utiliser la même API que le patron pour marquer comme terminée
       const response = await axios.post(
-        `http://localhost:8000/api/commandes/${id}/mark-terminee/`, 
+        `https://patisserie-backend.onrender.com/api/commandes/${id}/mark-terminee/`, 
         {}, 
         { headers }
       );

@@ -19,7 +19,7 @@ const Catalogue = () => {
   const fetchGateaux = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:8000/api/public/gateaux/');
+      const response = await axios.get('https://patisserie-backend.onrender.com/api/public/gateaux/');
       setGateaux(response.data.gateaux || response.data);
     } catch (error) {
       console.error('Erreur lors du chargement du catalogue:', error);

@@ -56,7 +56,7 @@ const Galerie = () => {
   const fetchPhotos = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:8000/api/galerie/');
+      const response = await axios.get('https://patisserie-backend.onrender.com/api/galerie/');
       setPhotos(response.data.photos);
       setCategories(response.data.categories);
     } catch (error) {
@@ -122,7 +122,7 @@ const Galerie = () => {
 
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:8000/api/galerie/${photoId}/supprimer/`, {
+      await axios.delete(`https://patisserie-backend.onrender.com/api/galerie/${photoId}/supprimer/`, {
         headers: { Authorization: `Token ${token}` }
       });
       
@@ -150,10 +150,10 @@ const Galerie = () => {
       }
 
       if (editMode) {
-        await axios.put(`http://localhost:8000/api/galerie/${selectedPhoto.id}/modifier/`, submitData, { headers });
+        await axios.put(`https://patisserie-backend.onrender.com/api/galerie/${selectedPhoto.id}/modifier/`, submitData, { headers });
         alert('Photo modifiée avec succès');
       } else {
-        await axios.post('http://localhost:8000/api/galerie/ajouter/', submitData, { headers });
+        await axios.post('https://patisserie-backend.onrender.com/api/galerie/ajouter/', submitData, { headers });
         alert('Photo ajoutée avec succès');
       }
       
